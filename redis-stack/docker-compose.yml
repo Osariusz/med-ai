@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis/redis-stack:latest
+    ports:
+      - "6379:6379"  # Redis server port
+      - "8001:8001"  # Redis Insight port
+    volumes:
+      - redis_data:/data  # Persistent storage for Redis data
+
+volumes:
+  redis_data:
