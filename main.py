@@ -25,10 +25,32 @@ VSS_INDEX: str = f"idx:{PARAGRAPH_KEY}_vss"
 client = redis.Redis(host="localhost", port=6379, decode_responses=True)
 embedder = SentenceTransformer(TEXT_EMBEDDING_MODEL)
 
-def get_paragraphs() -> list[object]:
-    with open("paragraphs.json", encoding="utf-8") as file:
-        paragraphs = json.loads(file.read())
-        return paragraphs
+def get_paragraphs() -> list[str]:
+    # Load articles and paragraphs from their respective JSON files
+    with open("articles.json", encoding="utf-8") as articles_file:
+        articles = json.load(articles_file)
+
+    with open("paragraphs.json", encoding="utf-8") as paragraphs_file:
+        paragraphs = json.load(paragraphs_file)
+
+    # Organize paragraphs by article_id
+    paragraphs_by_article = {}
+    for paragraph in paragraphs:
+        article_id = paragraph["article_id"]
+        if article_id not in paragraphs_by_article:
+            paragraphs_by_article[article_id] = []
+        paragraphs_by_article[article_id].append(paragraph["content"])
+
+    # Combine paragraphs for each article into a single string
+    combined_articles = []
+    for article in articles:
+        article_id = article["id"]
+        if article_id in paragraphs_by_article:
+            combined_text = " ".join(paragraphs_by_article[article_id])
+            combined_articles.append({'content': combined_text})
+
+    return combined_articles
+
 
 def load_data_to_redis(paragraphs: list[object]):
     pipeline = client.pipeline()
@@ -91,7 +113,8 @@ def k_nearest_neighbors(prompt: str, k: int = K_NEAREST_NEIGHBORS_DEFAULT_VALUE)
 
 def main():
     #setup()
-    k_nearest_neighbors("Wróciłem ostatnio z afryki mam wymioty i bóle brzucha, bolą mnie mięsnie")
+    #k_nearest_neighbors("Wróciłem ostatnio z afryki mam wymioty i bóle brzucha, bolą mnie mięsnie")
+    k_nearest_neighbors("Mam gorączkę katar kaszel, bolą mnie mięśnie i gardło")
 
 if __name__ == "__main__":
     main()
