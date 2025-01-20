@@ -1,4 +1,5 @@
 import json
+import os
 import time
 
 import numpy as np
@@ -22,7 +23,7 @@ TEXT_EMBEDDING_MODEL: str = "sdadas/st-polish-paraphrase-from-distilroberta"
 K_NEAREST_NEIGHBORS_DEFAULT_VALUE: int = 10
 VSS_INDEX: str = f"idx:{PARAGRAPH_KEY}_vss"
 
-client = redis.Redis(host="localhost", port=6379, decode_responses=True)
+client = redis.Redis(host=os.getenv("REDIS_URL"), port=os.getenv("REDIS_PORT"), decode_responses=True)
 embedder = SentenceTransformer(TEXT_EMBEDDING_MODEL)
 
 def get_paragraphs() -> list[str]:
