@@ -2,3 +2,4 @@ venv/
 articles.json
 paragraphs.json
 __pycache__/
+.env

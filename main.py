@@ -1,9 +1,15 @@
-from redis_integration import k_nearest_neighbors
+import os
+from fastapi import FastAPI
+from ai_integration import AiService
 
-def main():
-    #setup()
-    #k_nearest_neighbors("Wróciłem ostatnio z afryki mam wymioty i bóle brzucha, bolą mnie mięsnie")
-    k_nearest_neighbors("Mam gorączkę katar kaszel, bolą mnie mięśnie i gardło")
+app = FastAPI()
+ai_service = AiService(ai_url=os.getenv("AI_URL"), ai_model=os.getenv("AI_MODEL"))
+
+@app.get("/medical-advice")
+def get_medical_advice(symptoms: str):
+    advice = ai_service.generate_medical_advice(symptoms)
+    return advice
 
 if __name__ == "__main__":
-    main()
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
