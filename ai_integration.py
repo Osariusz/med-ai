@@ -8,21 +8,19 @@ class AiService:
         self.ai_url = ai_url
         self.ai_model = ai_model
 
-    def generate_medical_advice(self, user_input: str) -> str:
-
-        paragraphs: list[str] = k_nearest_neighbors(user_input)
-
+    def summarize_article(self, article: str) -> str:
+        MAX_ARTICLE_LENGTH = 1500
+        if(len(article) > MAX_ARTICLE_LENGTH):
+            article = article[:MAX_ARTICLE_LENGTH]
         prompt = (
             f"""# Kontekst:
-Jesteś znanym i renomowanym lekarzem specjalistą. Twoim głównym zadaniem jest stawianie diagnozy i proponowanie leczenia na podstawie tego, co mówi pacjent. Skup się przede wszystkim na objawach i opisie problemu przekazanym przez pacjenta. Zwróć uwagę na miejsce pobytu pacjenta, potencjalne narażenie na określone choroby opisane w źródłach oraz inne istotne czynniki. Otrzymasz także kilka źródeł (np. artykułów naukowych), które mogą stanowić wsparcie, ale traktuj je jako drugorzędne względem relacji pacjenta. Oceń, na co może cierpieć pacjent, i zaproponuj odpowiednie kroki leczenia.
-
-# Źródła:
-{paragraphs}
-# Wiadomość pacjenta:
-{user_input}
-# Odpowiedź lekarza:
+Jesteś znanym i renomowanym lekarzem specjalistą. Dostaniesz artykuł naukowy o schorzeniu ze szczegółami jego leczenia, dawkami lekarstw i tak dalej. Twoim zadaniem jest streścić ten artykuł do nazwy i objawów.
+# Artykuł naukowy:
+{article}
+# Streszczenie artykułu:
 """
         )
+        print(prompt)
         
         generation_payload = {
             "model": self.ai_model,
@@ -34,7 +32,63 @@ Jesteś znanym i renomowanym lekarzem specjalistą. Twoim głównym zadaniem jes
             response = requests.post(
                 f"{self.ai_url}/api/generate",
                 json=generation_payload,
-                timeout=10
+                timeout=300
+            )
+
+            response.raise_for_status()
+
+            result = response.json()
+            if 'response' not in result:
+                raise ValueError("Invalid response format from AI API")
+
+            return result['response']
+
+        except requests.exceptions.RequestException as e:
+            raise ValueError(f"Error communicating with AI API: {e}") from e
+        except ValueError as e:
+            raise ValueError(f"Error processing AI response: {e}") from e
+
+    def generate_medical_advice(self, user_input: str) -> str:
+        print("asking ai")
+        paragraphs: list[str] = k_nearest_neighbors(user_input)
+
+        def modify_article(article: str):
+            summarized_article: str = self.summarize_article(article)
+            MAX_SUMMARY_LENGTH = 1000
+            if(len(summarized_article) > MAX_SUMMARY_LENGTH):
+                return summarized_article[:MAX_SUMMARY_LENGTH]
+            return summarized_article
+
+        paragraphs = [modify_article(paragraph) for paragraph in paragraphs]
+        paragraphs_for_prompt = "\n".join(paragraphs)
+        MAX_ARTICLES_PART_LENGTH = 2000
+        if(len(paragraphs_for_prompt) > MAX_ARTICLES_PART_LENGTH):
+            paragraphs_for_prompt = paragraphs_for_prompt[:MAX_ARTICLES_PART_LENGTH]
+
+        prompt = (
+            f"""# Kontekst:
+Jesteś znanym i renomowanym lekarzem specjalistą. Twoim głównym zadaniem jest stawianie diagnozy i proponowanie leczenia na podstawie tego, co mówi pacjent. Skup się przede wszystkim na objawach i opisie problemu przekazanym przez pacjenta. Zwróć uwagę na miejsce pobytu pacjenta, potencjalne narażenie na określone choroby opisane w źródłach oraz inne istotne czynniki. Otrzymasz także kilka źródeł (np. artykułów naukowych), które mogą stanowić wsparcie, ale traktuj je jako drugorzędne względem relacji pacjenta. Oceń, na co może cierpieć pacjent, i zaproponuj odpowiednie kroki leczenia. Mów krótko, wymień możliwe choroby i mów językiem zrozumiałym dla pacjenta. Ogranicz się do minimum i nie wymieniaj liczb ani nie pisz nic czego nie ma w twoich źródłach.
+
+# Źródła dla lekarza:
+{paragraphs_for_prompt}
+# Dolegliwości pacjenta:
+{user_input}
+# Odpowiedź lekarza:
+"""
+        )
+        print(prompt)
+        
+        generation_payload = {
+            "model": self.ai_model,
+            "prompt": prompt,
+            "stream": False
+        }
+
+        try:
+            response = requests.post(
+                f"{self.ai_url}/api/generate",
+                json=generation_payload,
+                timeout=300
             )
 
             response.raise_for_status()
