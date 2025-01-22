@@ -108,5 +108,6 @@ def k_nearest_neighbors(prompt: str, k: int = K_NEAREST_NEIGHBORS_DEFAULT_VALUE)
             "query_vector": np.array(encoded_prompt, dtype=np.float32).tobytes()
         }
     ).docs
-    vector_score = result_docs[0].vector_score
-    print("\n".join([f"kolejny paragraf - {doc.content}" for doc in result_docs]))
+    #vector_score = result_docs[0].vector_score
+    #print("\n".join([f"kolejny paragraf - {doc.content}" for doc in result_docs]))
+    return [doc.content for doc in result_docs]
