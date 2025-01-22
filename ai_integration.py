@@ -29,7 +29,9 @@ Leczenie:
             "model": self.ai_model,
             "prompt": prompt,
             "stream": False,
-            "num_predict": 300
+            "options": {
+                "num_predict": 300
+            }
         }
 
         exception_occured = True        
@@ -92,7 +94,9 @@ Jesteś renomowanym lekarzem, diagnozujesz i leczysz na podstawie objawów podan
             "model": self.ai_model,
             "prompt": prompt,
             "stream": False,
-            "num_predict": 300
+            "options": {
+                "num_predict": 300
+            }
         }
 
 
