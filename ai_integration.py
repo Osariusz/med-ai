@@ -30,7 +30,7 @@ Leczenie:
             "prompt": prompt,
             "stream": False,
             "options": {
-                "num_predict": 300
+                "num_predict": 200
             }
         }
 
@@ -69,7 +69,7 @@ Leczenie:
 
         paragraphs = [modify_article(paragraph) for paragraph in paragraphs]
         paragraphs_for_prompt = "\n".join(paragraphs)
-        MAX_ARTICLES_PART_LENGTH = 700
+        MAX_ARTICLES_PART_LENGTH = 500
         if(len(paragraphs_for_prompt) > MAX_ARTICLES_PART_LENGTH):
             paragraphs_for_prompt = paragraphs_for_prompt[:MAX_ARTICLES_PART_LENGTH]
 
