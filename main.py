@@ -26,6 +26,7 @@ app.add_middleware(
 def get_medical_advice(symptoms: str):
     print("starting medical advice")
     advice = ai_service.generate_medical_advice(symptoms)
+    advice = advice.replace("\n", "<br/>")
     return advice
 
 if __name__ == "__main__":
