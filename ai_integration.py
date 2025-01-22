@@ -32,25 +32,26 @@ Leczenie:
             "stream": False
         }
 
-        try:
-            response = requests.post(
-                f"{self.ai_url}/api/generate",
-                json=generation_payload,
-                timeout=300
-            )
+        exception_occured = True        
+        while(exception_occured):
+            try:
+                response = requests.post(
+                    f"{self.ai_url}/api/generate",
+                    json=generation_payload,
+                    timeout=300
+                )
 
-            response.raise_for_status()
+                response.raise_for_status()
 
-            result = response.json()
-            if 'response' not in result:
-                raise ValueError("Invalid response format from AI API")
+                result = response.json()
+                if 'response' not in result:
+                    raise ValueError("Invalid response format from AI API")
+                exception_occured = False
+                return result['response']
 
-            return result['response']
+            except Exception as e:
+                exception_occured = True
 
-        except requests.exceptions.RequestException as e:
-            raise ValueError(f"Error communicating with AI API: {e}") from e
-        except ValueError as e:
-            raise ValueError(f"Error processing AI response: {e}") from e
 
     def generate_medical_advice(self, user_input: str) -> str:
         print("asking ai")
@@ -91,22 +92,23 @@ Jesteś znanym i renomowanym lekarzem specjalistą. Twoim głównym zadaniem jes
             "stream": False
         }
 
-        try:
-            response = requests.post(
-                f"{self.ai_url}/api/generate",
-                json=generation_payload,
-                timeout=300
-            )
 
-            response.raise_for_status()
+        exception_occured = True        
+        while(exception_occured):
+            try:
+                response = requests.post(
+                    f"{self.ai_url}/api/generate",
+                    json=generation_payload,
+                    timeout=300
+                )
 
-            result = response.json()
-            if 'response' not in result:
-                raise ValueError("Invalid response format from AI API")
+                response.raise_for_status()
 
-            return result['response']
+                result = response.json()
+                if 'response' not in result:
+                    raise ValueError("Invalid response format from AI API")
+                exception_occured = False
+                return result['response']
 
-        except requests.exceptions.RequestException as e:
-            raise ValueError(f"Error communicating with AI API: {e}") from e
-        except ValueError as e:
-            raise ValueError(f"Error processing AI response: {e}") from e
+            except Exception as e:
+                exception_occured = True
