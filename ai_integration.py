@@ -9,12 +9,12 @@ class AiService:
         self.ai_model = ai_model
 
     def summarize_article(self, article: str) -> str:
-        MAX_ARTICLE_LENGTH = 20
+        MAX_ARTICLE_LENGTH = 600
         if(len(article) > MAX_ARTICLE_LENGTH):
             article = article[:MAX_ARTICLE_LENGTH]
         prompt = (
             f"""# Kontekst:
-Jesteś znanym i renomowanym lekarzem specjalistą. Dostaniesz artykuł naukowy o schorzeniu ze szczegółami jego leczenia, dawkami lekarstw i tak dalej. Twoim zadaniem jest streścić ten artykuł do nazwy zwyczajowej, objawów i sposobów leczenia zgodnie ze schematem. Twoja wypowiedź nie może przekroczyć 500 znaków.
+Jesteś znanym i renomowanym lekarzem specjalistą. Dostaniesz artykuł naukowy o schorzeniu ze szczegółami jego leczenia, dawkami lekarstw i tak dalej. Twoim zadaniem jest streścić ten artykuł do nazwy zwyczajowej, objawów i sposobów leczenia zgodnie ze schematem. Twoja wypowiedź nie może przekroczyć 400 znaków.
 # Schemat:
 Nazwa:
 Objawy:
@@ -25,7 +25,6 @@ Leczenie:
 """
         )
         print(prompt)
-        print(len(prompt))
         generation_payload = {
             "model": self.ai_model,
             "prompt": prompt,
@@ -60,7 +59,7 @@ Leczenie:
 
         def modify_article(article: str):
             summarized_article: str = self.summarize_article(article)
-            MAX_SUMMARY_LENGTH = 100
+            MAX_SUMMARY_LENGTH = 200
             if(len(summarized_article) > MAX_SUMMARY_LENGTH):
                 return summarized_article[:MAX_SUMMARY_LENGTH]
             return summarized_article
@@ -73,8 +72,7 @@ Leczenie:
 
         prompt = (
             f"""# Kontekst:
-Jesteś znanym i renomowanym lekarzem specjalistą. Twoim głównym zadaniem jest stawianie diagnozy i proponowanie leczenia na podstawie tego, co mówi pacjent. Skup się przede wszystkim na objawach i opisie problemu przekazanym przez pacjenta. Zwróć uwagę na miejsce pobytu pacjenta, potencjalne narażenie na określone choroby opisane w źródłach oraz inne istotne czynniki. Otrzymasz także kilka źródeł (np. artykułów naukowych), które mogą stanowić wsparcie, ale traktuj je jako drugorzędne względem relacji pacjenta. Oceń, na co może cierpieć pacjent, i zaproponuj odpowiednie kroki leczenia. Mów krótko, wymień możliwe choroby i mów językiem zrozumiałym dla pacjenta.
-
+Jesteś renomowanym lekarzem, diagnozujesz i leczysz na podstawie objawów podanych przez pacjenta. Skup się na ich opisie, uwzględnij miejsce pobytu i czynniki ryzyka. Źródła traktuj jako pomocnicze. Podaj możliwe choroby i proponowane leczenie, używając prostego, zrozumiałego języka.
 # Źródła dla lekarza:
 {paragraphs_for_prompt}
 # Dolegliwości pacjenta:
@@ -83,10 +81,12 @@ Jesteś znanym i renomowanym lekarzem specjalistą. Twoim głównym zadaniem jes
 """
         )
         print(prompt)
-        MAX_PROMPT = 100
+        MAX_PROMPT = 1000
+        print(len(prompt))
         if(len(prompt) > MAX_PROMPT):
              print("warning too many char in prompt")
-             prompt = prompt[len(prompt)-MAX_PROMPT:]
+             prompt = prompt[:MAX_PROMPT]
+             print(prompt)
         generation_payload = {
             "model": self.ai_model,
             "prompt": prompt,
