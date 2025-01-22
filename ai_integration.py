@@ -34,6 +34,7 @@ Leczenie:
 
         exception_occured = True        
         while(exception_occured):
+            print("try generating")
             try:
                 response = requests.post(
                     f"{self.ai_url}/api/generate",
@@ -95,6 +96,7 @@ Jesteś znanym i renomowanym lekarzem specjalistą. Twoim głównym zadaniem jes
 
         exception_occured = True        
         while(exception_occured):
+            print("try generating")
             try:
                 response = requests.post(
                     f"{self.ai_url}/api/generate",
