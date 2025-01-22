@@ -29,7 +29,8 @@ Leczenie:
         generation_payload = {
             "model": self.ai_model,
             "prompt": prompt,
-            "stream": False
+            "stream": False,
+            "num_predict": 300
         }
 
         exception_occured = True        
@@ -90,7 +91,8 @@ Jesteś znanym i renomowanym lekarzem specjalistą. Twoim głównym zadaniem jes
         generation_payload = {
             "model": self.ai_model,
             "prompt": prompt,
-            "stream": False
+            "stream": False,
+            "num_predict": 300
         }
 
 
