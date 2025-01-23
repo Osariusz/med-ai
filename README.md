@@ -18,7 +18,7 @@ System AI umożliwia pacjentowi opisanie swoich symptomów, a następnie:
 
 #### Przykłady promptów
 - **Prompt do streszczania artykułów**:
-# Kontekst:
+```# Kontekst:
 Jesteś znanym i renomowanym lekarzem specjalistą. Dostaniesz artykuł naukowy o schorzeniu ze szczegółami jego leczenia, dawkami lekarstw i tak dalej. Twoim zadaniem jest streścić ten artykuł do nazwy zwyczajowej, objawów i sposobów leczenia zgodnie ze schematem. Twoja wypowiedź nie może przekroczyć 400 znaków.
 # Schemat:
 Nazwa:
@@ -26,7 +26,8 @@ Objawy:
 Leczenie:
 # Artykuł naukowy:
 {article}
-# Streszczenie artykułu:```
+# Streszczenie artykułu:
+```
 - **Prompt do generowania odpowiedzi**: 
 ```# Kontekst:
 Jesteś renomowanym lekarzem, diagnozujesz i leczysz na podstawie objawów podanych przez pacjenta. Skup się na ich opisie, uwzględnij miejsce pobytu i czynniki ryzyka. Źródła traktuj jako pomocnicze. Podaj możliwe choroby i proponowane leczenie, używając prostego, zrozumiałego języka.
@@ -35,6 +36,7 @@ Jesteś renomowanym lekarzem, diagnozujesz i leczysz na podstawie objawów podan
 # Dolegliwości pacjenta:
 {user_input}
 # Odpowiedź lekarza:
+```
 
 #### Tech Stack
 - **Języki**: Python
